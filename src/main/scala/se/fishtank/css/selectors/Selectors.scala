@@ -47,7 +47,7 @@ class Selectors(val root: Elem) {
     }
   }
 
-  def query(selectorGroups: List[SelectorGroup]): List[Node] = {
+  private def queryRaw(selectorGroups: List[SelectorGroup]): Set[Location] = {
     // TODO: Make this tail recursive.
     def loop(xs: List[Selector]): List[Location] = xs.foldLeft(rootLoc :: Nil) { (ys, selector) =>
       val byTagName = queryByTagNameAndCombinator(selector, ys)
@@ -68,14 +68,18 @@ class Selectors(val root: Elem) {
 
     // Need to get rid of duplicates. Not a very nice solution, but it works.
     import collection.JavaConversions._
-    val set = new java.util.LinkedHashSet[Node]()
+    val set = new java.util.LinkedHashSet[Location]()
     for (group <- selectorGroups) {
-      val res = loop(group.selectors).map(_.node)
+      val res = loop(group.selectors)
       set ++= res
     }
-    
-    set.toList
-  }
+
+      set.toSet
+   }
+
+  def query(selectorGroups: List[SelectorGroup]): List[Node] =
+    queryRaw(selectorGroups).toList.map { _.node }
+
 
   private def queryByTagNameAndCombinator(selector: Selector, xs: List[Location]): List[Location] = {
     val tagName = tagNameFilter(selector)
@@ -136,6 +140,9 @@ class Selectors(val root: Elem) {
       xs.filter(l => nextElemByName(l, l.node.label).isEmpty)
     case PseudoClass.OnlyOfType =>
       xs.filter(l => prevElemByName(l, l.node.label).isEmpty && nextElemByName(l, l.node.label).isEmpty)
+    case PseudoClass.Has(subselector) =>
+      val innerMatch = queryRaw(subselector).toSet
+      xs.filterNot { _.descendants(NoFilter).toSet.intersect(innerMatch).isEmpty }
   }
   
   private def queryByPseudoNth(nth: PseudoNth, xs: List[Location]): List[Location] = nth.value match {

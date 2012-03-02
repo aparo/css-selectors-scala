@@ -86,6 +86,9 @@ private[selectors] class SelectorParser extends RegexParsers with ImplicitConver
     "[" ~> rep(s) ~> ident ~! attribMatch <~ rep(s) <~ "]" ^^ { case name ~ m => Attribute(name, m) }
 
   lazy val pseudoClassOrNth: PackratParser[PseudoSpecifier] =
+    (not("not") ~> ":has(") ~> selectors <~ ")" ^^ {
+        case selector => PseudoClass(Has(selector))
+      } |
     not("not") ~> ":" ~> ident ~ opt("(" ~> rep(s) ~> nth <~ rep(s) <~ ")") ^? ({
       case Empty.repr ~ None              => PseudoClass(Empty)
       case Root.repr ~ None               => PseudoClass(Root)

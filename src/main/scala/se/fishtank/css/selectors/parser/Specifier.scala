@@ -53,6 +53,9 @@ object Specifier {
     case object FirstOfType extends Value("first-of-type")
     case object LastOfType extends Value("last-of-type")
     case object OnlyOfType extends Value("only-of-type")
+    case class Has(argument: List[SelectorGroup]) extends Value("has") {
+      override def toString: String = "has(%s)".format(argument.mkString(" "))
+    }
   }
 
   case class PseudoClass(value: PseudoClass.Value) extends PseudoSpecifier {
