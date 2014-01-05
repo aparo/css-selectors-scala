@@ -4,14 +4,14 @@ name := "css-selectors-scala"
 
 version := "0.1.2"
 
-scalaVersion := "2.9.2"
+scalaVersion := "2.10.3"
 
-crossScalaVersions := Seq("2.9.2", "2.9.1")
+//crossScalaVersions := Seq("2.9.2", "2.9.1")
 
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-Xcheckinit", "-Xmigration", "-encoding", "UTF-8")
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "1.6.1" % "test"
+  "org.scalatest" %% "scalatest" % "2.0" % "test"
 )
 
 publishMavenStyle := true

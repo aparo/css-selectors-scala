@@ -1,10 +1,10 @@
 package se.fishtank.css.selectors
 
 import org.scalatest.FlatSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
 
-class SelectorsSpec extends FlatSpec with ShouldMatchers {
+class SelectorsSpec extends FlatSpec with Matchers {
   "Querying" should "return the expected number of nodes" in {
     for ((selector, expected) <- TestData.SelectorExpected) {
       Selectors.query(selector, TestData.Html) match {
